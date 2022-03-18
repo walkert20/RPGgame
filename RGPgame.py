@@ -22,23 +22,33 @@ class Player():
     def calculate_damage(Player, damage, attacker):
     	Player.health -= damage
     	print("{0} takes {1} damage from {2}!"
-    		.format(Player.name.capitalize(), damage, attacker))
+    		.format(Player.name.capitalize(), damage, attacker.name.capitalize()))
+    	print()
 
-    	if (0 > Player.health):
+    	if (0 >= Player.health):
     		Player.health = 0
     		Player.status = "Defeated."
-    		print("{0} has been defeated!")
+    		print("{0} has been defeated!".format(Player.name.capitalize()))
+    		print()
 
+    def LEVEL_UP(Player):
+    	Player.MAX_health += int(.15 * Player.MAX_health)
+    	Player.Atk += 15
+    	Player.Def += 2
+    	Player.exp = 0
+    	Player.MAX_exp += 15
+    	Player.level += 1
 
-#     def calculate_heal(Player, target_player, heal_amount):
-#     	if (heal_amount + target_player.health >= target_player.MAX_health):
-#     		target_player.health = target_player.MAX_health
-#     		print("{0} heals {1} back to full health!"
-#     			.format(Player.name.capitalize, target_player.name.capitalize))
-#     	else:
-#     		target_player += heal_amount
-#     		print("{0} heals {1} for {2}!"
-#     			.format(Player.name.capitalize, target_player.name.capitalize, heal_amount))
+    def calculate_heal(Player, heal_amount):
+    	Player.health += heal_amount
+    	print("{0} recovers {1} health!"
+    		.format(Player.name.capitalize(), heal_amount))
+    	if (Player.health > Player.MAX_health):
+    		Player.health = Player.MAX_health
+    		print("{0} is back at full health!"
+    			.format(Player.name.capitalize()))
+    	print()
+
 
 # def parse_int(input):
 #     try:

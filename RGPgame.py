@@ -1,10 +1,6 @@
 import random
 import time
 
-print ("Hello")
-
-
-items = []
 
 
 class Player():
@@ -13,7 +9,6 @@ class Player():
         self.health = 100
         self.MAX_health = 100
         self.Atk = 100
-        self.Def = 90
         self.exp = 0
         self.MAX_exp = 100
         self.level = 1
@@ -34,7 +29,6 @@ class Player():
     def LEVEL_UP(Player):
     	Player.MAX_health += int(.15 * Player.MAX_health)
     	Player.Atk += 15
-    	Player.Def += 2
     	Player.exp = 0
     	Player.MAX_exp += 15
     	Player.level += 1
@@ -50,54 +44,133 @@ class Player():
     	print()
 
 
-# def parse_int(input):
-#     try:
-#         int(input)
-#         return True
-#     except ValueError:
-#         return False
 
-# def get_selection():
-#     valid_input = False
-#     while (valid_input is False):
-#         print()
-#         choice = input("What will you do?: ")
-#         if (parse_int(choice) is True):
-#             return int(choice)
-#         else:
-#             print("The input was invalid. Please try again.")
+#########      Work on this later     #############
 
-# def enemy_turn(Player):
-# 	sleep_time = random.randrange(2, 6)
-# 	print("....enemy turn....")
-# 	time.sleep(sleep_time)
+#def use_item(Player, item):   <--within player class
 
-# 	if (Player.role == "medic"): #To make things simple, the medic only heals themselves.
-# 		if (Player.health <=  (.35 * Player.MAX_health)):
-# 			result = random.randint(1,6)
-# 			if (result % 2 == 0):
-# 				return 3
-# 			else:
-# 				return random.randint(1,2)
-# 		else:
-# 			return random.randint(1,2,3)
+#class teams():
 
-# 	elif (Player.role == "attacker"):
-# 		if (Player.health <=  (.40 * Player.MAX_health)):
-# 			result = random.randint(1,6)
-# 			if (result % 2 == 0):
-# 				return 2
-# 			else:
-# 				return random.randint(1,3)
-# 		else:
-# 			return random.randint(1,2,3)
 
-# 	else:
-# 		result = random.randint(1,10)
-# 		if (result <= 4):
-# 			return 3
-# 		else:
-# 			return 1
+#class item():
+#    def __init__(self, name, value):
+#        self.name = name
+#        self.value = value
+    	
+
+
+class enemy():
+    
+    def calculate_damage(Player, damage, attacker):
+        Player.health -= damage
+        print("{0} takes {1} damage from {2}!"
+            .format(Player.name.capitalize(), damage, attacker.name.capitalize()))
+        print()
+
+        if (0 >= Player.health):
+            Player.health = 0
+            Player.status = "Defeated."
+            print("{0} has been defeated!".format(Player.name.capitalize()))
+            print()
+
+    def calculate_heal(Player, heal_amount):
+        Player.health += heal_amount
+        print("{0} recovers {1} health!"
+            .format(Player.name.capitalize(), heal_amount))
+        if (Player.health > Player.MAX_health):
+            Player.health = Player.MAX_health
+            print("{0} is back at full health!"
+                .format(Player.name.capitalize()))
+        print()
+
+    class Healer():
+        def __init__(self, name, level):
+            self.name = name
+            self.health = 100
+            self.MAX_health = 100
+            self.Atk = 100
+            self.level = 1
+            self.status = "Normal."
+            self.role = "Healer"
+
+        def healer_action():
+            if (Player.health <= (.35 * Player.MAX_health)):
+                result = random.randint(1,6)
+                if (result % 2 == 0):
+                    return 3
+                else:
+                    return random.randint(1,2)
+            else:
+                return random.randint(1,2,3)
+
+    class Attacker():
+        def __init__(self, name, level):
+            self.name = name
+            self.health = 100
+            self.MAX_health = 100
+            self.Atk = 100
+            self.level = 1
+            self.status = "Normal."
+            self.role = "Attacker"   
+
+        def attacker_action():
+            if (Player.health <=  (.40 * Player.MAX_health)):
+                result = random.randint(1,6)
+                if (result % 2 == 0):
+                    return 2
+                else:
+                    return random.randint(1,3)
+            else:
+                return random.randint(1,2,3)
+
+    class Boss():
+        def __init__(self, name, level):
+            self.name = name
+            self.health = 400
+            self.MAX_health = 400
+            self.Atk = 400
+            self.level = 5
+            self.status = "Normal."
+            self.role = "Boss"
+
+        def boss_action():
+            result = random.randint(1,10)
+            if (result <= 4):
+                return 3
+            else:
+                return 1
+
+
+def parse_int(input):
+    try:
+        int(input)
+        return True
+    except ValueError:
+        return False
+
+def get_selection():
+    valid_input = False
+    while (valid_input is False):
+        print()
+        choice = input("What will you do?: ")
+        if (parse_int(choice) is True):
+            return int(choice)
+        else:
+            print("The input was invalid. Please try again.")
+
+def enemy_turn(Player):
+    sleep_time = random.randrange(2, 6)
+    print("....enemy turn....")
+    time.sleep(sleep_time)
+    if (Player.role == "Healer"):     #To make things simple, the medic only heals themselves.
+        Player.healer_action()
+
+    elif (Player.role == "Attacker"):
+        Player.attacker_action()
+
+    else:
+        Player.boss_action()
+
 
 # def play_round (player, computer):
 # 	game_in_progress = True

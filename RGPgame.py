@@ -84,25 +84,26 @@ class Enemy():
                 .format(enemy.name.capitalize()))
         print()
 
-    def healer_action(enemy):
-        if (enemy.health <= (.35 * enemy.MAX_health)):
-            result = random.randint(1,6)
-            if (result % 2 == 0):
-                return 3
-            else:
-                return random.randint(1,2)
+    def healer_action(enemy):   #To make things simple, the medic only heals themselves.
+        result = random.randint(1,6)
+        if (result % 2 == 0):
+            enemy.calculate_heal(int(randrange(.10* enemy.MAX_health, .20* enemy.MAX_health)))
+            return 3
         else:
-            return random.randint(1,3) 
+            return random.randint(1,2)
 
     def attacker_action(enemy):
-        if (enemy.health <=  (.40 * enemy.MAX_health)):
-            result = random.randint(1,6)
-            if (result % 2 == 0):
-                return 2                
-            else:
-                return random.randint(1,3)
+        result = random.randint(1,6)
+        if (result % 2 == 0):
+            print( "The enemy charges your team!")
+            damage = random.randrange(int(enemy.Atk*.10), int(enemy.Atk*.17))
+                x = random.choice(who_is_alive(PlayerTeam))
+                x.calculate_damage(damage, enemy)
+                y = random.choice(who_is_alive(PlayerTeam))
+                y.calculate_damage(damage, enemy)
+            return 3                
         else:
-            return random.randint(1,3)
+            return random.randint(1,2)
 
     def boss_action():
         result = random.randint(1,10)
@@ -196,8 +197,8 @@ def Battle(PlayerTeam, EnemyTeam):
             if(player_turn):
                 print("We don't have any items right now. Please pick another choice.")
                 print("Oh, wait! I found a grenade! That should work.")
-                x = random.choice(who_is_alive(EnemyTeam))
-                x.calculate_damage(25, player)
+                for livingPlayer in who_is_alive(EnemyTeam):
+                    livingPlayer.calculate_damage(20, player)
             else:
                 print("The enemy threw a grenade at your team!")
                 for livingPlayer in who_is_alive(PlayerTeam):
@@ -212,11 +213,11 @@ def Battle(PlayerTeam, EnemyTeam):
                 y = random.choice(who_is_alive(EnemyTeam))
                 y.calculate_damage(damage, player)
             else:
-                print("The enemy watches you closely...")
+                #print("The enemy watches you closely...")
                 sleep_time = random.randrange(2, 5)
                 time.sleep(sleep_time)
         else:
-            print("The input was invalid. Please try again.")
+            print("The input was invalid. Please try again next time.")
 
         if not(team_is_alive(PlayerTeam)) or not(team_is_alive(EnemyTeam)):
             in_battle = False
@@ -249,19 +250,19 @@ def after_battle(PlayerTeam, EnemyTeam):
     else:
         print("The enemy team has been defeated! Victory!")
 
-def mock_battle_1():
+def mock_battle_1(): # 2v1 attacker.
     tony = Player("Tony")
     sara = Player("sara")
     john = Enemy("john", "attacker")
     Battle([sara, tony],[john])
 
-def mock_battle_2():
+def mock_battle_2(): # 1v1 healer.
     name = input("What is your name? ") 
     player = Player(name)
-    Tony = Enemy("tony", "attacker")
+    Tony = Enemy("tony", "healer")
     Battle([player], [Tony])
 
-def mock_battle_3():
+def mock_battle_3(): # 3v3 attacker.
     name = input("What is your name? ")
     player = Player(name)
     tony = Player("Tony")
@@ -278,6 +279,24 @@ def mock_battle_3():
     time.sleep(sleep_time)
     Battle([player, tony, sara], [john, tobi, kain])
 
+def mock_battle_4(): # 2v2, 1 attacker, 1 healer.
+    vinny = Player("vinny")
+    sara = Player("sara")
+    john = Enemy("john", "attacker")
+    tony = Enemy("tony", "healer")
+    Battle([vinny, sara],[john, tony])
+
+def mock_boss_battle(): # 4v1 boss.
+    vinny = Player("vinny")
+    sara = Player("sara")
+    pan = Player("pan")
+    paul = Player("paul")
+    Bully = Enemy("bully", "boss")
+
+
+
+
 #mock_battle_1()
-#mock_battle_2()
+mock_battle_2()
 #mock_battle_3()
+#mock_battle_4()

@@ -282,9 +282,6 @@ def mock_boss_battle(): # 4v1 boss.
     paul = Player("paul")
     Bully = Enemy("bully", "boss")
 
-
-
-
 #mock_battle_1()
 #mock_battle_2()
 #mock_battle_3()

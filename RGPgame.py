@@ -2,7 +2,6 @@ import random
 import time
 
 
-
 class Player():
     def __init__(self, name):
         self.name = name
@@ -19,7 +18,6 @@ class Player():
     	print("{0} takes {1} damage from {2}!"
     		.format(Player.name.capitalize(), damage, attacker.name.capitalize()))
     	print()
-
     	if (0 >= Player.health):
     		Player.health = 0
     		Player.status = "Down"
@@ -67,7 +65,6 @@ class Enemy():
         print("{0} takes {1} damage from {2}!"
             .format(enemy.name.capitalize(), damage, attacker.name.capitalize()))
         print()
-
         if (0 >= enemy.health):
             enemy.health = 0
             enemy.status = "Down"
@@ -87,7 +84,7 @@ class Enemy():
     def healer_action(enemy):   #To make things simple, the medic only heals themselves.
         result = random.randint(1,6)
         if (result % 2 == 0):
-            enemy.calculate_heal(int(randrange(.10* enemy.MAX_health, .20* enemy.MAX_health)))
+            enemy.calculate_heal(int(random.randrange(.10* enemy.MAX_health, .20* enemy.MAX_health)))
             return 3
         else:
             return random.randint(1,2)
@@ -95,12 +92,6 @@ class Enemy():
     def attacker_action(enemy):
         result = random.randint(1,6)
         if (result % 2 == 0):
-            print( "The enemy charges your team!")
-            damage = random.randrange(int(enemy.Atk*.10), int(enemy.Atk*.17))
-                x = random.choice(who_is_alive(PlayerTeam))
-                x.calculate_damage(damage, enemy)
-                y = random.choice(who_is_alive(PlayerTeam))
-                y.calculate_damage(damage, enemy)
             return 3                
         else:
             return random.randint(1,2)
@@ -135,10 +126,8 @@ def enemy_turn(enemy):
     time.sleep(sleep_time)
     if (enemy.role == "healer"):     #To make things simple, the medic only heals themselves.
         return enemy.healer_action()
-
     elif (enemy.role == "attacker"):
         return enemy.attacker_action()
-
     else:
         return enemy.boss_action()
 
@@ -184,7 +173,8 @@ def Battle(PlayerTeam, EnemyTeam):
                 print()
                 Enemies = who_is_alive(EnemyTeam)
                 for x in Enemies:
-                    print(str(Enemies.index(x)+1) +") " + x.name)
+                    print(str(Enemies.index(x)+1) +") " + x.name + " "+ str(x.health) +
+                        "/"+ str(x.MAX_health))
                 choice = get_selection()
                 damage = random.randrange(player.Atk*.18, player.Atk*.25)
                 Enemies[choice-1].calculate_damage(damage, player)
@@ -213,7 +203,7 @@ def Battle(PlayerTeam, EnemyTeam):
                 y = random.choice(who_is_alive(EnemyTeam))
                 y.calculate_damage(damage, player)
             else:
-                #print("The enemy watches you closely...")
+                print("The enemy watches you closely...")
                 sleep_time = random.randrange(2, 5)
                 time.sleep(sleep_time)
         else:
@@ -242,8 +232,6 @@ def who_is_alive(team):
             Alive.append(teammate)
     return Alive
 
-#def get_next_player(team):
-
 def after_battle(PlayerTeam, EnemyTeam):
     if team_is_alive(PlayerTeam) == False:
         print("Your team has been wiped out! You lose.")
@@ -260,6 +248,7 @@ def mock_battle_2(): # 1v1 healer.
     name = input("What is your name? ") 
     player = Player(name)
     Tony = Enemy("tony", "healer")
+    Tony.health = 30
     Battle([player], [Tony])
 
 def mock_battle_3(): # 3v3 attacker.
@@ -297,6 +286,6 @@ def mock_boss_battle(): # 4v1 boss.
 
 
 #mock_battle_1()
-mock_battle_2()
+#mock_battle_2()
 #mock_battle_3()
 #mock_battle_4()

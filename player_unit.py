@@ -23,7 +23,13 @@ class Player():
     		print("{0} has been defeated!".format(Player.name.capitalize()))
     		print()
 
+    def gain_exp(Player, exp):
+    	Player.exp += exp
+    	if (Player.exp >= Player.MAX_exp):
+    		Player.LEVEL_UP()
+
     def LEVEL_UP(Player):
+    	print("{0} has leveled up!".format(Player.name.capitalize()))
     	Player.MAX_health += int(.15 * Player.MAX_health)
     	Player.Atk += 15
     	Player.exp = 0
@@ -46,14 +52,22 @@ class Player():
     			print(str(Enemies.index(x)+1) +") " + x.name + " "+ str(x.health) +
     				"/"+ str(x.MAX_health))
     		choice = get_target()
+    		while (choice >= 4 or choice < 1):
+    			print("Invalid choice. Try again.")
+    			choice = get_target()
     		damage = random.randrange(player.Atk*.18, player.Atk*.25)
-    		Enemies[choice-1].calculate_damage(damage, player)
+    		enemy = Enemies[choice-1]
+    		enemy.calculate_damage(damage, player)
+    		if (enemy.health == 0):
+    			player.gain_exp(15*enemy.level)
 
     	elif (choice == 2):
     		print("We don't have any items right now. Please pick another choice.")
     		print("Oh, wait! I found a grenade! That should work.")
     		for enemy in Enemies:
     			enemy.calculate_damage(20, player)
+    			if (enemy.health == 0):
+    				player.gain_exp(15*enemy.level)
 
     	elif (choice == 3):
     		print( "You charged the enemy team alone!")
@@ -62,7 +76,13 @@ class Player():
     		x.calculate_damage(damage, player)
     		y = random.choice(Enemies)
     		y.calculate_damage(damage, player)
-
+    		if (x == y and x.health == 0):
+    			player.gain_exp(15*x.level)
+    		else:
+    			if(x.health == 0):
+    				player.gain_exp(15*x.level)
+    			if(y.health == 0):
+    				player.gain_exp(15*y.level)
     	else:
     		print("The input was invalid. Please try again next time.")
 

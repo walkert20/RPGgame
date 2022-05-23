@@ -37,11 +37,18 @@ class Enemy():
 
     def healer_action(enemy, Heroes):   #To make things simple, the medic only heals themselves.
         result = random.randint(1,6)
-        if (result % 3 == 0):
-            enemy.calculate_heal(int(random.randrange(.10* enemy.MAX_health, .20* enemy.MAX_health)))
-            return 3
+        if (enemy.health <= .40*enemy.MAX_health):
+        	if (result % 3 == 0):
+        		print("{0} healed themself!".format(enemy.name.capitalize()))
+        		enemy.calculate_heal(int(random.randrange(.10* enemy.MAX_health, .20* enemy.MAX_health)))
+        	else:
+        		damage = random.randrange(enemy.Atk*.11, enemy.Atk*.17)
+        		hero = random.choice(Heroes)
+        		hero.calculate_damage(damage, enemy)
         else:
-            return random.randint(1,2)
+        	damage = random.randrange(enemy.Atk*.11, enemy.Atk*.17)
+        	hero = random.choice(Heroes)
+        	hero.calculate_damage(damage, enemy)
 
     def attacker_action(enemy,Heroes):
         result = random.randint(1,10)

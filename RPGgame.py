@@ -2,9 +2,11 @@ import random
 import time
 import player_unit
 import enemy_unit
+#import items
 
 defeated = []
-away =[]
+away = []
+storage = []
 
 def parse_int(input):
     try:
@@ -24,6 +26,8 @@ def get_selection():
             print("The input was invalid. Please try again.")
 
 def Battle(PlayerTeam, EnemyTeam):
+    # base_team = PlayerTeam
+    # base_enemy_team = EnemyTeam
     in_battle = True
     player_turn = False
     i=-1
@@ -46,6 +50,12 @@ def Battle(PlayerTeam, EnemyTeam):
             i=0
         if j >= len(EnemyTeam):
             j=0
+
+            
+        #print (i)      Trouble shooting
+
+
+        print()
         player  = PlayerTeam[i]  #current_turn_player
         enemy = EnemyTeam[j]   #current_enemy_turn_player
         print()
@@ -61,14 +71,18 @@ def Battle(PlayerTeam, EnemyTeam):
             while (choice >= 4 or choice < 1):
                 print("Invalid choice. Try again.")
                 choice = get_selection()
-            player.player_turn(EnemyTeam, choice)
+            player.player_turn(storage, EnemyTeam, PlayerTeam, choice)
         else:
             enemy.enemy_turn(PlayerTeam)
 
         if not(team_is_alive(PlayerTeam)) or not(team_is_alive(EnemyTeam)):
             in_battle = False
     after_battle(PlayerTeam, EnemyTeam)
-
+    retry = input("Try again? (y/n) ")
+    if retry == "y":
+        Battle(base_team, base_enemy_team)
+    else:
+        return
 
 def team_is_alive(team):
     allAlive = False
@@ -92,14 +106,27 @@ def who_is_alive(team):
 def after_battle(PlayerTeam, EnemyTeam):
     if team_is_alive(PlayerTeam) == False:
         print("Your team has been wiped out! You lose.")
+        return
     else:
         print("The enemy team has been defeated! Victory!")
         for player in PlayerTeam:
             player.gain_exp(30)
 
-def mock_battle_1(): # 2v1 attacker.
+def test_adventure():
+    name = input("What is your name? ")
+    player = player_unit.Player(name)
     tony = player_unit.Player("Tony")
     sara = player_unit.Player("sara")
+    pan = player_unit.Player("pan")
+    paul = player_unit.Player("paul")
+
+
+
+def mock_battle_1(): # 2v1 attacker.
+    tony = player_unit.Player("Tony")
+    tony.health=10
+    sara = player_unit.Player("sara")
+    sara.health=10
     john = enemy_unit.Enemy("john", "attacker")
     Battle([sara, tony],[john])
 
@@ -140,8 +167,12 @@ def mock_boss_battle(): # 4v1 boss.
     pan = player_unit.Player("pan")
     paul = player_unit.Player("paul")
     Bully = enemy_unit.Enemy("bully", "boss")
+    Bully.MAX_health = 400
+    Bully.health = 400
+    Battle([vinny, sara, pan, paul], [Bully])
 
-#mock_battle_1()
+mock_battle_1()
 #mock_battle_2()
 #mock_battle_3()
 #mock_battle_4()
+#mock_boss_battle()

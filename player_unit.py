@@ -1,6 +1,8 @@
 # Player_class
 import random
 
+used_item = 0
+
 class Player():
     def __init__(self, name):
         self.name = name
@@ -35,6 +37,7 @@ class Player():
 
     def gain_exp(Player, exp):
         Player.exp += exp
+        print ("{0} gained {1} exp.".format(Player.name.capitalize(), exp))
         if (Player.exp >= Player.MAX_exp):
             Player.LEVEL_UP()
 
@@ -57,23 +60,36 @@ class Player():
         player.status = unit.status
         return player
 
-    def using_item(storage, enemies, heroes):
+    def using_item(player, storage, enemies, heroes):
         item_list = []
         for x in storage:
             if x in item_list:
                 pass
             else:
-                print(str(storage[storage.index(x)]) + "(" + str(storage.count(x)) + ")" )
+                print(storage[storage.index(x)].name + "(" + str(storage.count(x)) + ")")
                 item_list.append(x)
-        # NOTE: THIS IS SLOW!!! Log(n^2) SLOW AT WORST!!!!!! MAKE THIS FASTER LATER ON!!!!!
+                # NOTE: THIS IS SLOW!!! O(n^2) SLOW AT WORST!!!!!! MAKE THIS FASTER LATER ON!!!!!
+                # NOTE: A way to make this faster: make a finite list/library and just keep track of how many
+                #       of each item the player has. This potentially could make it O(n) at worst.
+                #       Example: Potions:2, grenades:3, etc.
+                #       This could also give more usevalue from the item class.
+                # NOTE: Also, throw this part into the main game.
+
+
         print()
-        choice = get_item()                   #NOTE: THIS FUNCTION COULD REPLACE THE SAFE_CHOICE FUNTION    
+        choice = get_item()                   #NOTE: THIS FUNCTION COULD REPLACE THE SAFE_CHOICE FUNTION   
+        while (choice > len(storage) or choice < 1):
+            print("Invalid choice. Try again.")
+            choice = get_item() 
 
         # safe_choice(choice, item_list)
         item = item_list[choice-1]                #THIS WILL RETURN AN ITEM
         if item.output == "harm":
             enemy_targets(enemies)
             newChoice = get_target()
+            while (newChoice > len(heroes) or newChoice < 1):
+                print("Invalid choice. Try again.")
+                newChoice = get_target()
             #safe_choice(newChoice, enemies)
             damage = item.value
             enemy = enemies[newChoice-1]
@@ -82,7 +98,11 @@ class Player():
                 player.gain_exp(15*enemy.level)
 
         elif item.output == "heal":
-            newChoice = get_ally_target(heroes)
+            ally_targets(heroes)
+            newChoice = get_target()
+            while (newChoice > len(heroes) or newChoice < 1):
+                print("Invalid choice. Try again.")
+                newChoice = get_target()
             #safe_choice(newChoice, heroes)
             damage = item.value
             hero = heroes[newChoice-1]
@@ -92,27 +112,12 @@ class Player():
 
         # elif item.output == "nerf":
 
-    def get_ally_target(heroes):
-        for x in heroes:
-            print(str(heroes.index(x)+1) +") " + x.name + " "+ str(x.health) +
-            "/"+ str(x.MAX_health))
-
-
-    def get_item():
-        valid_input = False
-        while (valid_input is False):
-            print()
-            choice = input("What do you have in mind?")
-            if (parse_int(choice) is True):
-                return int(choice)
-            else:
-                print("The input was invalid. Please try again.")
-
     def player_turn(player, storage, enemies, heroes, choice):
-    	if(choice == 1):
+        used_item = 0
+        if(choice == 1):
             enemy_targets(enemies)
             choice = get_target()
-            while (choice >= 4 or choice < 1):
+            while (choice > len(enemies) or choice < 1):
                 print("Invalid choice. Try again.")
                 choice = get_target()
             damage = random.randrange(player.Atk*.18, player.Atk*.25)
@@ -121,33 +126,39 @@ class Player():
             if (enemy.health == 0):
                 player.gain_exp(15*enemy.level)
 
-    	elif (choice == 2):
+        elif (choice == 2):
             if storage == []:
-                choice = input("You don't have any items at the moment. Please choose a different option.")
-                player.player_turn(storage, enemies, heroes, choice)
-                # This is skipping the player's turn. FIX THIS!!!!
+                print("You don't have any items at the moment. You picked up a rock and threw it at the enemy.")
+                enemy = random.choice(enemies)
+                enemy.calculate_damage(5, player)
+                if (enemy.health == 0):
+                    player.gain_exp(15*enemy.level)
             else:
-                using_item(storage, enemies, heroes)
+                player.using_item(storage, enemies, heroes)
 
-    	elif (choice == 3):
-    		print( "You charged the enemy team alone!")
-    		damage = random.randrange(int(player.Atk*.14), int(player.Atk*.20))
-    		x = random.choice(enemies)
-    		x.calculate_damage(damage, player)
-    		y = random.choice(enemies)
-    		y.calculate_damage(damage, player)
-    		if (x == y and x.health == 0):
-    			player.gain_exp(15*x.level)
-    		else:
-    			if(x.health == 0):
-    				player.gain_exp(15*x.level)
-    			if(y.health == 0):
-    				player.gain_exp(15*y.level)
+        elif (choice == 3):
+            print( "You charged the enemy team alone!")
+            damage = random.randrange(int(player.Atk*.14), int(player.Atk*.20))
+            x = random.choice(enemies)
+            x.calculate_damage(damage, player)
+            y = random.choice(enemies)
+            y.calculate_damage(damage, player)
+            if (x == y and x.health == 0):
+                player.gain_exp(15*x.level)
+            else:
+                if(x.health == 0):
+                    player.gain_exp(15*x.level)
+                if(y.health == 0):
+                    player.gain_exp(15*y.level)
 
 # def safe_choice(choice, list):
 #   while (choice >= len (list) or choice <1):
         #        print("Invalid choice. Try again.")
         #        choice = get_target()
+def ally_targets(heroes):
+        for x in heroes:
+            print(str(heroes.index(x)+1) +") " + x.name + " "+ str(x.health) +
+            "/"+ str(x.MAX_health))
 
 def enemy_targets(enemies):
     for x in enemies:
@@ -163,6 +174,16 @@ def get_target():
 			return int(choice)
 		else:
 			print("The input was invalid. Please try again.")
+
+def get_item():
+        valid_input = False
+        while (valid_input is False):
+            print()
+            choice = input("What do you have in mind?")
+            if (parse_int(choice) is True):
+                return int(choice)
+            else:
+                print("The input was invalid. Please try again.")
 
 def parse_int(input):
     try:

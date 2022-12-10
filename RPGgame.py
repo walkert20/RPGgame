@@ -2,7 +2,7 @@ import random
 import time
 import player_unit
 import enemy_unit
-#import items
+import items
 
 defeated = []
 away = []
@@ -51,8 +51,6 @@ def Battle(PlayerTeam, EnemyTeam):
         if j >= len(EnemyTeam):
             j=0
 
-            
-        #print (i)      Trouble shooting
 
 
         print()
@@ -72,6 +70,9 @@ def Battle(PlayerTeam, EnemyTeam):
                 print("Invalid choice. Try again.")
                 choice = get_selection()
             player.player_turn(storage, EnemyTeam, PlayerTeam, choice)
+            #update_storage()
+
+
         else:
             enemy.enemy_turn(PlayerTeam)
 
@@ -112,6 +113,11 @@ def after_battle(PlayerTeam, EnemyTeam):
         for player in PlayerTeam:
             player.gain_exp(30)
 
+def update_storage():
+    if (player_unit.used_item != 0):
+        storage.remove(player_unit.used_item)
+
+
 def test_adventure():
     name = input("What is your name? ")
     player = player_unit.Player(name)
@@ -120,14 +126,13 @@ def test_adventure():
     pan = player_unit.Player("pan")
     paul = player_unit.Player("paul")
 
-
-
 def mock_battle_1(): # 2v1 attacker.
     tony = player_unit.Player("Tony")
-    tony.health=10
     sara = player_unit.Player("sara")
-    sara.health=10
     john = enemy_unit.Enemy("john", "attacker")
+
+    potion = items.Item("potion", 20, "heal")
+    storage.append(potion)
     Battle([sara, tony],[john])
 
 def mock_battle_2(): # 1v1 healer.

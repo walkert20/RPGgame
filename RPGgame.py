@@ -2,11 +2,10 @@ import random
 import time
 import player_unit
 import enemy_unit
-import items
+#import items
 
 defeated = []
 away = []
-storage = []
 
 def parse_int(input):
     try:
@@ -34,7 +33,7 @@ def Battle(PlayerTeam, EnemyTeam):
     j=-1
     
     while in_battle == True:
-        enemy_defeated = 0
+        #enemy_defeated = 0
         if (player_turn == False):
             player_turn = True
             i += 1
@@ -52,11 +51,9 @@ def Battle(PlayerTeam, EnemyTeam):
             j=0
 
 
-
         print()
         player  = PlayerTeam[i]  #current_turn_player
         enemy = EnemyTeam[j]   #current_enemy_turn_player
-        print()
 
         if (player_turn):
             print("It's {0}'s turn. {1} health remaining."
@@ -69,9 +66,7 @@ def Battle(PlayerTeam, EnemyTeam):
             while (choice >= 4 or choice < 1):
                 print("Invalid choice. Try again.")
                 choice = get_selection()
-            player.player_turn(storage, EnemyTeam, PlayerTeam, choice)
-            #update_storage()
-
+            player.player_turn(EnemyTeam, PlayerTeam, choice)
 
         else:
             enemy.enemy_turn(PlayerTeam)
@@ -81,6 +76,7 @@ def Battle(PlayerTeam, EnemyTeam):
     after_battle(PlayerTeam, EnemyTeam)
     retry = input("Try again? (y/n) ")
     if retry == "y":
+        # both teams recover all health
         Battle(base_team, base_enemy_team)
     else:
         return
@@ -113,11 +109,6 @@ def after_battle(PlayerTeam, EnemyTeam):
         for player in PlayerTeam:
             player.gain_exp(30)
 
-def update_storage():
-    if (player_unit.used_item != 0):
-        storage.remove(player_unit.used_item)
-
-
 def test_adventure():
     name = input("What is your name? ")
     player = player_unit.Player(name)
@@ -125,14 +116,18 @@ def test_adventure():
     sara = player_unit.Player("sara")
     pan = player_unit.Player("pan")
     paul = player_unit.Player("paul")
+    # 3 fights:
+    # 1) 5 v 3
+    #myTeam = [player, tony, sara, pan, paul]
+    #Battle(myTeam, [john = enemy_unit.Enemy("john", "attacker"), jimmy = enemy_unit.Enemy("jimmy", "attacker"), joe = enemy_unit.Enemy("joe", "attacker")])
+    # 2) 5 v 4
+    # 3) 5 v boss
+
 
 def mock_battle_1(): # 2v1 attacker.
     tony = player_unit.Player("Tony")
     sara = player_unit.Player("sara")
     john = enemy_unit.Enemy("john", "attacker")
-
-    potion = items.Item("potion", 20, "heal")
-    storage.append(potion)
     Battle([sara, tony],[john])
 
 def mock_battle_2(): # 1v1 healer.
@@ -176,7 +171,7 @@ def mock_boss_battle(): # 4v1 boss.
     Bully.health = 400
     Battle([vinny, sara, pan, paul], [Bully])
 
-mock_battle_1()
+#mock_battle_1()
 #mock_battle_2()
 #mock_battle_3()
 #mock_battle_4()

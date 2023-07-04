@@ -1,7 +1,7 @@
 # Player_class
 import random
+import items
 
-used_item = 0
 
 class Player():
     def __init__(self, name):
@@ -60,61 +60,9 @@ class Player():
         player.status = unit.status
         return player
 
-    def using_item(player, storage, enemies, heroes):
-        item_list = []
-        for x in storage:
-            if x in item_list:
-                pass
-            else:
-                print(storage[storage.index(x)].name + "(" + str(storage.count(x)) + ")")
-                item_list.append(x)
-                # NOTE: THIS IS SLOW!!! O(n^2) SLOW AT WORST!!!!!! MAKE THIS FASTER LATER ON!!!!!
-                # NOTE: A way to make this faster: make a finite list/library and just keep track of how many
-                #       of each item the player has. This potentially could make it O(n) at worst.
-                #       Example: Potions:2, grenades:3, etc.
-                #       This could also give more usevalue from the item class.
-                # NOTE: Also, throw this part into the main game.
-
-
-        print()
-        choice = get_item()                   #NOTE: THIS FUNCTION COULD REPLACE THE SAFE_CHOICE FUNTION   
-        while (choice > len(storage) or choice < 1):
-            print("Invalid choice. Try again.")
-            choice = get_item() 
-
-        # safe_choice(choice, item_list)
-        item = item_list[choice-1]                #THIS WILL RETURN AN ITEM
-        if item.output == "harm":
-            enemy_targets(enemies)
-            newChoice = get_target()
-            while (newChoice > len(heroes) or newChoice < 1):
-                print("Invalid choice. Try again.")
-                newChoice = get_target()
-            #safe_choice(newChoice, enemies)
-            damage = item.value
-            enemy = enemies[newChoice-1]
-            enemy.calculate_damage(damage, player)
-            if (enemy.health == 0):
-                player.gain_exp(15*enemy.level)
-
-        elif item.output == "heal":
-            ally_targets(heroes)
-            newChoice = get_target()
-            while (newChoice > len(heroes) or newChoice < 1):
-                print("Invalid choice. Try again.")
-                newChoice = get_target()
-            #safe_choice(newChoice, heroes)
-            damage = item.value
-            hero = heroes[newChoice-1]
-            hero.calculate_heal(damage)
-
-        # elif item.output == "buff":
-
-        # elif item.output == "nerf":
-
-    def player_turn(player, storage, enemies, heroes, choice):
-        used_item = 0
+def player_turn(player, enemies, heroes, choice):
         if(choice == 1):
+            used_item = False
             enemy_targets(enemies)
             choice = get_target()
             while (choice > len(enemies) or choice < 1):
@@ -126,15 +74,42 @@ class Player():
             if (enemy.health == 0):
                 player.gain_exp(15*enemy.level)
 
+
         elif (choice == 2):
-            if storage == []:
-                print("You don't have any items at the moment. You picked up a rock and threw it at the enemy.")
-                enemy = random.choice(enemies)
-                enemy.calculate_damage(5, player)
-                if (enemy.health == 0):
+            item = using_item(player, storage, enemies,heroes)
+
+            if (item[1] == "heal"):
+                ally_targets(heroes)
+                newChoice = get_target()
+                while (newChoice > len(heroes) or newChoice < 1):
+                    print("Invalid choice. Try again.")
+                    newChoice = get_target()
+                damage = item[2]
+                hero = heroes[newChoice-1]
+                hero.calculate_heal(damage)
+
+            elif (item[1] == "heal all"):
+                for ally in heroes:
+                    ally.calculate_heal(item[2])
+
+            elif (item[1] == "harm"):
+                enemy_targets(enemies)
+                newChoice = get_target()
+                while (newChoice > len(heroes) or newChoice < 1):
+                    print("Invalid choice. Try again.")
+                    newChoice = get_target()
+                damage = item[2]
+                enemy = enemies[newChoice-1]
+                enemy.calculate_damage(damage, player)
+                if(enemy.health == 0):
                     player.gain_exp(15*enemy.level)
-            else:
-                player.using_item(storage, enemies, heroes)
+
+            elif (item[1] == "harm all"):
+                for enemy in enemies:
+                    enemy.calculate_damage(item[2])
+                    if(enemy.health == 0):
+                        player.gain_exp(15*enemy.level)
+
 
         elif (choice == 3):
             print( "You charged the enemy team alone!")
@@ -151,10 +126,16 @@ class Player():
                 if(y.health == 0):
                     player.gain_exp(15*y.level)
 
-# def safe_choice(choice, list):
-#   while (choice >= len (list) or choice <1):
-        #        print("Invalid choice. Try again.")
-        #        choice = get_target()
+def using_item(player, storage, enemies, heroes):
+    i=1
+    temp_list = []
+    for item in storage:
+        print(str(i) + ") ", item + ": ", storage[item])
+        temp_list.append(item)
+    print()
+    x = get_item()
+    return items.use(temp_list[x])
+
 def ally_targets(heroes):
         for x in heroes:
             print(str(heroes.index(x)+1) +") " + x.name + " "+ str(x.health) +

@@ -2,7 +2,7 @@ import random
 import time
 import player_unit
 import enemy_unit
-#import items
+import items
 
 defeated = []
 away = []
@@ -127,7 +127,11 @@ def test_adventure():
 def mock_battle_1(): # 2v1 attacker.
     tony = player_unit.Player("Tony")
     sara = player_unit.Player("sara")
-    john = enemy_unit.Enemy("john", "attacker")
+    john = enemy_unit.Enemy("john (enemy)", "attacker")
+    a = ["water", "water", "grenade"]
+    for x in a:
+        items.store(x)
+
     Battle([sara, tony],[john])
 
 def mock_battle_2(): # 1v1 healer.
@@ -171,7 +175,7 @@ def mock_boss_battle(): # 4v1 boss.
     Bully.health = 400
     Battle([vinny, sara, pan, paul], [Bully])
 
-#mock_battle_1()
+mock_battle_1()
 #mock_battle_2()
 #mock_battle_3()
 #mock_battle_4()

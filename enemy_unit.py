@@ -83,7 +83,7 @@ class Enemy():
 			hero = random.choice(Heroes)
 			hero.calculate_damage(damage, enemy)
 		elif (result >5 and result <8):
-			damage = int(enemy.Atk*.26)
+			damage = int(enemy.Atk*.28)
 			hero = random.choice(Heroes)
 			print( "{0} launched a powerful attack on {1}!".
 				format(enemy.name.capitalize(), hero.name.capitalize()))

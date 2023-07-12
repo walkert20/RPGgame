@@ -60,9 +60,8 @@ class Player():
         player.status = unit.status
         return player
 
-def player_turn(player, enemies, heroes, choice):
+    def player_turn(player, enemies, heroes, choice):
         if(choice == 1):
-            used_item = False
             enemy_targets(enemies)
             choice = get_target()
             while (choice > len(enemies) or choice < 1):
@@ -76,7 +75,20 @@ def player_turn(player, enemies, heroes, choice):
 
 
         elif (choice == 2):
-            item = using_item(player, storage, enemies,heroes)
+            item = using_item(player, items.storage, enemies, heroes)
+
+            while (item==0):
+                item = using_item(player, items.storage, enemies, heroes)
+
+                #print()
+                #print("1) Melee attack.")
+                #print("2) Use item.")
+                #print("3) Special move!")
+                #choice = get_selection()
+                #while (choice >= 4 or choice < 1):
+                #    print("Invalid choice. Try again.")
+                #    choice = get_selection()
+                #player.player_turn(enemies, heroes, choice)
 
             if (item[1] == "heal"):
                 ally_targets(heroes)
@@ -132,9 +144,10 @@ def using_item(player, storage, enemies, heroes):
     for item in storage:
         print(str(i) + ") ", item + ": ", storage[item])
         temp_list.append(item)
+        i+=1
     print()
     x = get_item()
-    return items.use(temp_list[x])
+    return items.use(temp_list[x-1])
 
 def ally_targets(heroes):
         for x in heroes:
@@ -172,3 +185,13 @@ def parse_int(input):
         return True
     except ValueError:
         return False
+
+def get_selection():
+    valid_input = False
+    while (valid_input is False):
+        print()
+        choice = input("What will you do?: ")
+        if (parse_int(choice) is True):
+            return int(choice)
+        else:
+            print("The input was invalid. Please try again.")        

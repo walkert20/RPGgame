@@ -73,7 +73,7 @@ def Battle(PlayerTeam, EnemyTeam):
 
         if not(team_is_alive(PlayerTeam)) or not(team_is_alive(EnemyTeam)):
             in_battle = False
-    after_battle(PlayerTeam, EnemyTeam)
+    current_team = after_battle(PlayerTeam, EnemyTeam)
     retry = input("Try again? (y/n) ")
     if retry == "y":
         # both teams recover all health
@@ -108,6 +108,11 @@ def after_battle(PlayerTeam, EnemyTeam):
         print("The enemy team has been defeated! Victory!")
         for player in PlayerTeam:
             player.gain_exp(30)
+        for player in defeated:
+            player.health = int(.25*player.MAX_health)
+            player.status = "Normal"
+            PlayerTeam.append(player)
+        return PlayerTeam
 
 def test_adventure():
     name = input("What is your name? ")
@@ -118,10 +123,21 @@ def test_adventure():
     paul = player_unit.Player("paul")
     # 3 fights:
     # 1) 5 v 3
-    #myTeam = [player, tony, sara, pan, paul]
-    #Battle(myTeam, [john = enemy_unit.Enemy("john", "attacker"), jimmy = enemy_unit.Enemy("jimmy", "attacker"), joe = enemy_unit.Enemy("joe", "attacker")])
+    myTeam = [player, tony, sara, pan, paul]
+    john = enemy_unit.Enemy("john", "attacker")
+    jimmy = enemy_unit.Enemy("jimmy", "attacker")
+    joe = enemy_unit.Enemy("joe", "attacker")
+    Battle(myTeam, [john, jimmy, joe])
     # 2) 5 v 4
+    soldier_1 = enemy_unit.Enemy("soldier_1", "attacker")
+    soldier_2 = enemy_unit.Enemy("soldier_2", "healer")
+    soldier_3 = enemy_unit.Enemy("soldier_3", "attacker")
+    Battle(myTeam, [soldier_1, soldier_2, soldier_3])
     # 3) 5 v boss
+    Bully = enemy_unit.Enemy("bully", "boss")
+    Bully.MAX_health = 400
+    Bully.health = 400
+    Battle(myTeam, [Bully]) 
 
 
 def mock_battle_1(): # 2v1 attacker.
@@ -131,7 +147,6 @@ def mock_battle_1(): # 2v1 attacker.
     a = ["water", "water", "grenade"]
     for x in a:
         items.store(x)
-
     Battle([sara, tony],[john])
 
 def mock_battle_2(): # 1v1 healer.
@@ -175,7 +190,7 @@ def mock_boss_battle(): # 4v1 boss.
     Bully.health = 400
     Battle([vinny, sara, pan, paul], [Bully])
 
-mock_battle_1()
+#mock_battle_1()
 #mock_battle_2()
 #mock_battle_3()
 #mock_battle_4()

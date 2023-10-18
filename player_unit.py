@@ -75,20 +75,19 @@ class Player():
 
 
         elif (choice == 2):
+            if (items.check_inventory() == False):
+                print("Your inventoryis empty.")
+                choice = get_selection()
+                while (choice >= 4 or choice < 1):
+                    print("Invalid choice. Try again.")
+                    choice = get_selection()
+                player.player_turn(enemies, heroes, choice)
+                return
+
             item = using_item(player, items.storage, enemies, heroes)
 
             while (item==0):
                 item = using_item(player, items.storage, enemies, heroes)
-
-                #print()
-                #print("1) Melee attack.")
-                #print("2) Use item.")
-                #print("3) Special move!")
-                #choice = get_selection()
-                #while (choice >= 4 or choice < 1):
-                #    print("Invalid choice. Try again.")
-                #    choice = get_selection()
-                #player.player_turn(enemies, heroes, choice)
 
             if (item[1] == "heal"):
                 ally_targets(heroes)
@@ -160,14 +159,14 @@ def enemy_targets(enemies):
             "/"+ str(x.MAX_health))
 
 def get_target():
-	valid_input = False
-	while (valid_input is False):
-		print()
-		choice = input("Who will you target? ")
-		if (parse_int(choice) is True):
-			return int(choice)
-		else:
-			print("The input was invalid. Please try again.")
+    valid_input = False
+    while (valid_input is False):
+        print()
+        choice = input("Who will you target? ")
+        if (parse_int(choice) is True):
+            return int(choice)
+        else:
+            print("The input was invalid. Please try again.")
 
 def get_item():
         valid_input = False
